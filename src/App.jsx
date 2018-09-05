@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import ChatBar from './ChatBar.jsx';
 import MessageList from './MessageList.jsx';
 
+const ws = new WebSocket("ws://0.0.0.0:3001");
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -21,15 +23,24 @@ class App extends Component {
         }
       ]
     };
+    this.socket = ws;
     this.onNewPost = this.onNewPost.bind(this); 
   }
   
   componentDidMount() {
+    this.socket.onopen = (e) => {
+      console.log('Connected to server');
+    };
+    this.socket.onmessage = function(str) {
+      console.log(str);
+    }
+
+    
+
     console.log("componentDidMount <App />");
     setTimeout(() => {
       console.log("Simulating incoming message");
       // Add a new message to the list of messages in the data store
-  
       const newMessage = {id: 3, username: "Michelle", content: "Hello there!"};
       const messages = this.state.messages.concat(newMessage)
       // Update the state of the app component.
@@ -48,6 +59,19 @@ class App extends Component {
     console.log(messages)
     this.setState({
       messages: messages})
+    
+      function sendText() {
+      // Construct a msg object containing the data the server needs to process the message from the chat client.
+      var msg = {
+        // type: "message",
+        // text: document.getElementByClassName("chatbar-message").value,
+        // id:   clientID,
+        // date: Date.now()
+      };
+    this.socket.send(JSON.stringify(msg));
+    
+    // document.getElementByClassName("chatbar-message").value = "";
+      
   }
 
   render() {
