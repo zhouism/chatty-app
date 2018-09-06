@@ -7,7 +7,7 @@ class App extends Component {
     super(props);
     this.state = {
       loading: true,
-      currentUser: {name: "Anonymous"}, // optional. if currentUser is not defined, it means the user is Anonymous
+      currentUser: {name: 'Anonymous'}, // optional. if currentUser is not defined, it means the user is Anonymous
       messages: []
     }
     
@@ -35,8 +35,8 @@ class App extends Component {
       let newMessages = this.state.messages;
       newMessages.concat(message);
       const messages = this.state.messages.concat(message);
-
       this.setState({
+        loading: true,
         messages: messages
       })
     }
@@ -52,9 +52,9 @@ class App extends Component {
       // Update the state of the app component.
       // Calling setState will trigger a call to render() in App and all child components.
       this.setState({
-        loading: false,
+        // loading: false,
         messages: messages})
-    }, 500);
+    }, 300);
   }
 
   onNewPost(content) {
@@ -70,18 +70,17 @@ class App extends Component {
 
 
   render() {
-    if (this.state.loading) {
+    // if (this.state.loading) {
       return (
         <div>
         <nav className="navbar">
           <a href="/" className="navbar-brand">Chatty</a>
         </nav>
         <MessageList messages={this.state.messages} />
-        <ChatBar onNewPost={ this.onNewPost } updateUser={this.updateUser} currentUser = {this.state.currentUser.name}/>
+        <ChatBar onNewPost={this.onNewPost} updateUser={this.updateUser} currentUser = {this.state.currentUser.name}/>
         </div>
       );
-      
-    }
+    // }
   }
 }
 
