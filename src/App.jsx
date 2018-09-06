@@ -2,37 +2,43 @@ import React, {Component} from 'react';
 import ChatBar from './ChatBar.jsx';
 import MessageList from './MessageList.jsx';
 
-const ws = new WebSocket("ws://0.0.0.0:3001");
-
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       loading: true,
-      currentUser: {name: "Bob"}, // optional. if currentUser is not defined, it means the user is Anonymous
-      messages: [
-        {
-          id: 1,
-          username: "Bob",
-          content: "Has anyone seen my marbles?",
-        },
-        {
-          id: 2,
-          username: "Anonymous",
-          content: "No, I think you lost them. You lost your marbles Bob. You lost them for good."
-        }
-      ]
-    };
-    this.socket = ws;
+      currentUser: {name: "Anonymous"}, // optional. if currentUser is not defined, it means the user is Anonymous
+      messages: []
+    }
+    
     this.onNewPost = this.onNewPost.bind(this); 
+    this.updateUser = this.updateUser.bind(this)
   }
   
+
   componentDidMount() {
+   
+    this.socket = new WebSocket("ws://localhost:3001");
+    
     this.socket.onopen = (e) => {
       console.log('Connected to server');
     };
-    this.socket.onmessage = function(str) {
-      console.log(str);
+    this.socket.onmessage = (evt) => {
+     
+      const msg = JSON.parse(evt.data);
+      console.log(msg)
+      const message = {
+        id: msg.id,
+        username: msg.username,
+        content: msg.content
+      };
+      let newMessages = this.state.messages;
+      newMessages.concat(message);
+      const messages = this.state.messages.concat(message);
+
+      this.setState({
+        messages: messages
+      })
     }
 
     
@@ -48,46 +54,35 @@ class App extends Component {
       this.setState({
         loading: false,
         messages: messages})
-    }, 3000);
+    }, 500);
   }
 
   onNewPost(content) {
-    const id = this.state.messages.length + 1;
-    const newMessage = {id: id, username: this.state.currentUser.name, content: content }
-    console.log(newMessage);
-    const messages = this.state.messages.concat(newMessage)
-    console.log(messages)
-    this.setState({
-      messages: messages})
-    
-      function sendText() {
-      // Construct a msg object containing the data the server needs to process the message from the chat client.
-      var msg = {
-        // type: "message",
-        // text: document.getElementByClassName("chatbar-message").value,
-        // id:   clientID,
-        // date: Date.now()
-      };
-    this.socket.send(JSON.stringify(msg));
-    
-    // document.getElementByClassName("chatbar-message").value = "";
-      
-  }
+    const newMessage = { content: content }
+    this.socket.send(JSON.stringify(newMessage));
+    } 
+  
+  updateUser(username) {
+    const newUser = { username: username }
+    this.socket.send(JSON.stringify(newUser));
+    }    
+  
+
 
   render() {
     if (this.state.loading) {
-      return <h1>Loading...</h1>
-    } else {
       return (
         <div>
         <nav className="navbar">
           <a href="/" className="navbar-brand">Chatty</a>
         </nav>
         <MessageList messages={this.state.messages} />
-        <ChatBar onNewPost={ this.onNewPost } currentUser = {this.state.currentUser.name}/>
+        <ChatBar onNewPost={ this.onNewPost } updateUser={this.updateUser} currentUser = {this.state.currentUser.name}/>
         </div>
       );
+      
     }
   }
 }
+
 export default App;

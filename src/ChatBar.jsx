@@ -5,32 +5,50 @@ class ChatBar extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            username: '',
             content: ''
         }
+        this.contentEnter = this.contentEnter.bind(this);
         this.onContent = this.onContent.bind(this); 
-        // this._handleKeyPress = this._handleKeyPress.bind(this);
+        this.userEnter = this.userEnter.bind(this);
+        this.onUser = this.onUser.bind(this);
     }
 
-    _handleKeyPress = (e) => {
-        if (e.key === 'Enter') {
-          console.log('do validate');
+    contentEnter(event) {
+        if (event.key === 'Enter') {
+          console.log('content enter tracked');
           this.props.onNewPost(this.state.content);
         }
     }
 
     onContent(event) {
         this.setState({
-          content: event.target.value
+          content: event.target.value,
         });
       }
+    
+    userEnter(event) {
+        if (event.key === 'Enter') {
+          console.log('user enter tracked');
+          this.props.updateUser(this.state.username);
+        }
+    }
+    
+    onUser(event) {
+        console.log(event.target.value)
+        this.setState({
+            username: event.target.value,
+        })
+    } 
+
       
     render(){
         const props = this.props;
         
         return (
             <footer className="chatbar">
-            <input defaultValue={props.currentUser} className="chatbar-username" placeholder="Your Name (Optional)" />
-            <input  onInput={ this.onContent } onKeyPress={this._handleKeyPress} className="chatbar-message" placeholder="Type a message and hit ENTER" />
+            <input defaultValue={props.currentUser} onInput={this.onUser} onKeyPress={this.userEnter} className="chatbar-username" placeholder="Your Name (Optional)" />
+            <input onInput={ this.onContent } onKeyPress={this.contentEnter} className="chatbar-message" placeholder="Type a message and hit ENTER" />
             </footer>
         )
     }
