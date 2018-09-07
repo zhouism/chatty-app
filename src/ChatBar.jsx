@@ -16,8 +16,6 @@ class ChatBar extends Component {
 
     contentEnter(event) {
         if (event.key === 'Enter') {
-          console.log('content enter tracked');
-          console.log(event.target.value)
           const content = {
               content: event.target.value,
               username: this.state.username,
@@ -34,7 +32,6 @@ class ChatBar extends Component {
     
     userEnter(event) {
         if (event.key === 'Enter') {
-          console.log('user enter tracked');
           const content = {
               username: event.target.value
           }
