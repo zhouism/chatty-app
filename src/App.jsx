@@ -24,25 +24,26 @@ class App extends Component {
       console.log('Connected to server');
     };
     this.socket.onmessage = (evt) => {
-     
+      console.log(evt.data);
       const msg = JSON.parse(evt.data);
-      console.log(msg)
+      
       const message = {
         type: msg.type,
         id: msg.id,
         username: msg.username,
         content: msg.content
       };
-      
+      const messages = this.state.messages.concat(message);
       switch(msg.type) {
         case "incomingMessage":
-          const messages = this.state.messages.concat(message);
           this.setState({
             messages: messages
           })
           break;
         case "incomingNotification":
-          // handle incoming notification
+        this.setState({
+          messages: messages
+        })
           break;
         default:
           // show an error in the console if the message type is unknown
@@ -58,7 +59,7 @@ class App extends Component {
     setTimeout(() => {
       console.log("Simulating incoming message");
       // Add a new message to the list of messages in the data store
-      const newMessage = {id: 3, username: "Michelle", content: "Hello there!"};
+      const newMessage = {type: 'incomingMessage', id: 3, username: "Michelle", content: "Hello there!"};
       const messages = this.state.messages.concat(newMessage)
       // Update the state of the app component.
       // Calling setState will trigger a call to render() in App and all child components.
@@ -77,18 +78,20 @@ class App extends Component {
     this.socket.send(JSON.stringify(newMessage));
     } 
   
-  updateUser(username) {
+  updateUser(content) {
+    console.log('updateUser', content);
     const newUser = { 
       type: "postNotification",
-      username: username }
+      username: content.username,
+      content: this.state.currentUser.name + ' has changed their name to ' + content.username
+    }
     this.socket.send(JSON.stringify(newUser));
+    console.log('newUser', newUser);
     this.setState({
-      currentUser: {name: username}
+      currentUser: {name: content.username}
     })
   }    
   
-
-
   render() {
     if (this.state.loading) {
       return (<h1>Loading...</h1>)

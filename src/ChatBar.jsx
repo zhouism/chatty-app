@@ -19,7 +19,7 @@ class ChatBar extends Component {
           console.log('content enter tracked');
           console.log(event.target.value)
           const content = {
-              content: this.state.content,
+              content: event.target.value,
               username: this.state.username,
           }
           this.props.onNewPost(content);
@@ -35,7 +35,10 @@ class ChatBar extends Component {
     userEnter(event) {
         if (event.key === 'Enter') {
           console.log('user enter tracked');
-          this.props.updateUser(this.state.username);
+          const content = {
+              username: event.target.value
+          }
+          this.props.updateUser(content);
         }
     }
     
