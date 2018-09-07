@@ -28,16 +28,28 @@ class App extends Component {
       const msg = JSON.parse(evt.data);
       console.log(msg)
       const message = {
+        type: msg.type,
         id: msg.id,
         username: msg.username,
         content: msg.content
       };
-      // let newMessages = this.state.messages;
-      // newMessages.concat(message);
-      const messages = this.state.messages.concat(message);
-      this.setState({
-        messages: messages
-      })
+      
+      switch(msg.type) {
+        case "incomingMessage":
+          const messages = this.state.messages.concat(message);
+          this.setState({
+            messages: messages
+          })
+          break;
+        case "incomingNotification":
+          // handle incoming notification
+          break;
+        default:
+          // show an error in the console if the message type is unknown
+          throw new Error("Unknown event type " + msg.type);
+      }
+      
+ 
     }
 
     
@@ -58,6 +70,7 @@ class App extends Component {
 
   onNewPost(content) {
     const newMessage = { 
+      type: "postMessage",
       content: content.content,
       username: content.username, 
     }
@@ -65,7 +78,9 @@ class App extends Component {
     } 
   
   updateUser(username) {
-    const newUser = { username: username }
+    const newUser = { 
+      type: "postNotification",
+      username: username }
     this.socket.send(JSON.stringify(newUser));
     this.setState({
       currentUser: {name: username}

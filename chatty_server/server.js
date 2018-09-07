@@ -32,6 +32,7 @@ wss.on('connection', (ws) => {
   ws.on('message', function incoming(data) {
     const dataObj = JSON.parse(data);
     dataObj.id = uuidv4();
+    dataObj.type = "incomingMessage"
     console.log(dataObj)
     const newMsg = JSON.stringify(dataObj)
     wss.broadcast(newMsg);
