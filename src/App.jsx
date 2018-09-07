@@ -32,11 +32,10 @@ class App extends Component {
         username: msg.username,
         content: msg.content
       };
-      let newMessages = this.state.messages;
-      newMessages.concat(message);
+      // let newMessages = this.state.messages;
+      // newMessages.concat(message);
       const messages = this.state.messages.concat(message);
       this.setState({
-        loading: true,
         messages: messages
       })
     }
@@ -52,35 +51,43 @@ class App extends Component {
       // Update the state of the app component.
       // Calling setState will trigger a call to render() in App and all child components.
       this.setState({
-        // loading: false,
+        loading: false,
         messages: messages})
-    }, 300);
+    }, 500);
   }
 
   onNewPost(content) {
-    const newMessage = { content: content }
+    const newMessage = { 
+      content: content.content,
+      username: content.username, 
+    }
     this.socket.send(JSON.stringify(newMessage));
     } 
   
   updateUser(username) {
     const newUser = { username: username }
     this.socket.send(JSON.stringify(newUser));
-    }    
+    this.setState({
+      currentUser: {name: username}
+    })
+  }    
   
 
 
   render() {
-    // if (this.state.loading) {
+    if (this.state.loading) {
+      return (<h1>Loading...</h1>)
+    } else {
       return (
         <div>
         <nav className="navbar">
           <a href="/" className="navbar-brand">Chatty</a>
         </nav>
         <MessageList messages={this.state.messages} />
-        <ChatBar onNewPost={this.onNewPost} updateUser={this.updateUser} currentUser = {this.state.currentUser.name}/>
+        <ChatBar onNewPost={this.onNewPost} updateUser={this.updateUser} currentUser={this.state.currentUser.name}/>
         </div>
       );
-    // }
+    }
   }
 }
 
