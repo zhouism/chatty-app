@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 class Message extends Component {
     render(){
         const props = this.props;
-        console.log('props', props)
 
         if (props.type === 'incomingMessage') {
             return (

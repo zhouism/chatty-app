@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import ChatBar from './ChatBar.jsx';
 import MessageList from './MessageList.jsx';
+import { WSASERVICE_NOT_FOUND } from 'constants';
 
 class App extends Component {
   constructor(props) {
@@ -8,7 +9,8 @@ class App extends Component {
     this.state = {
       loading: true,
       currentUser: {name: 'Anonymous'}, // optional. if currentUser is not defined, it means the user is Anonymous
-      messages: []
+      messages: [],
+      activeUser: 0
     }
     
     this.onNewPost = this.onNewPost.bind(this); 
@@ -24,9 +26,13 @@ class App extends Component {
       console.log('Connected to server');
     };
     this.socket.onmessage = (evt) => {
-      console.log(evt.data);
+      console.log('evtdata', evt.data);
       const msg = JSON.parse(evt.data);
-      
+      if (msg.type === 'updateClient'){
+        this.setState({
+          activeUser: msg.activeUser
+        })
+      }
       const message = {
         type: msg.type,
         id: msg.id,
@@ -100,6 +106,7 @@ class App extends Component {
         <div>
         <nav className="navbar">
           <a href="/" className="navbar-brand">Chatty</a>
+          <span className='navbar-active-users'> {this.state.activeUser} users online</span>
         </nav>
         <MessageList messages={this.state.messages} />
         <ChatBar onNewPost={this.onNewPost} updateUser={this.updateUser} currentUser={this.state.currentUser.name}/>
