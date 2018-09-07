@@ -2,8 +2,8 @@ Chatty App
 =====================
 Chatty App is a single page React app that allows users to send and receive text messages in real-time using any web browser.
 
-## Screenshot
-!["Main Page"] (https://github.com/zhouism/chatty-app/blob/master/docs/Screen%20Shot%202018-09-07%20at%201.41.03%20PM.png)
+## Screenshots
+!["Main Page"](https://github.com/zhouism/chatty-app/blob/master/docs/Screen%20Shot%202018-09-07%20at%201.41.03%20PM.png)
 
 ### Getting Started
 1. Follow the instructions to setup and run the Chatty App Server.
